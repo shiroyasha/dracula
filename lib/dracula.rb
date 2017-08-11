@@ -5,16 +5,31 @@ module Dracula
 
   class Flag
     attr_reader :name
-    attr_reader :default_value
     attr_reader :short_name
     attr_reader :type
-    attr_reader :required
 
-    def initialize(name, default_value, short_name, type, required)
+    def initialize(name, params)
       @name = name
-      @default_value = default_value
-      @short_name = short_name
-      @type = type
+      @params = params
+
+      @short_name = params.fetch(:short)
+      @type = params.fetch(:type, :string)
+    end
+
+    def boolean?
+      type == :boolean
+    end
+
+    def has_default_value?
+      @params.key?(:default_value) || boolean?
+    end
+
+    def default_value
+      if type == :boolean
+        @params.key?(:default_value) || false
+      else
+        @default_value
+      end
     end
   end
 
@@ -24,12 +39,7 @@ module Dracula
     end
 
     def self.flag(name, params= {})
-      default_value = params[:default_value]
-      short_name    = params[:short_name]
-      type          = params[:type] || String
-      required      = (params[:required] == true)
-
-      flags << Flag.new(name, default_value, short_name, type, required)
+      flags << Flag.new(name, params)
     end
 
     def self.run(args)
@@ -39,13 +49,29 @@ module Dracula
     def self.parse_flags(args)
       parsed_flags = {}
 
+      # set default values
+      flags.each do |flag|
+        if flag.has_default_value?
+          parsed_flags[flag.name] = flag.default_value
+        end
+      end
+
       opt_parser = OptionParser.new do |opts|
         flags.each do |flag|
-          short = "-#{flag.short_name}"
-          long  = "--#{flag.name} VALUE"
+          if flag.boolean?
+            short = "-#{flag.short_name}"
+            long  = "--#{flag.name}"
 
-          opts.on(short, long, flag.type) do |value|
-            parsed_flags[flag.name] = value
+            opts.on(short, long, flag.type) do
+              parsed_flags[flag.name] = true
+            end
+          else
+            short = "-#{flag.short_name}"
+            long  = "--#{flag.name} VALUE"
+
+            opts.on(short, long, flag.type) do |value|
+              parsed_flags[flag.name] = value
+            end
           end
         end
       end

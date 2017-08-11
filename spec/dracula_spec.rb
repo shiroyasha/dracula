@@ -8,9 +8,14 @@ RSpec.describe Dracula do
   class Login < Dracula::Command
     flag :username, :short => "u", :required => true
     flag :password, :short => "p", :required => true
+    flag :verbose,  :short => "v", :type => :boolean
 
     def run
-      "#{flags[:username]}:#{flags[:password]}"
+      if flags[:verbose]
+        "flag username: #{flags[:username]}; flag password: #{flags[:password]}"
+      else
+        "#{flags[:username]}:#{flags[:password]}"
+      end
     end
   end
 
@@ -24,6 +29,16 @@ RSpec.describe Dracula do
     result = Login.run(["-u", "Peter", "--password", "Parker"])
 
     expect(result).to eq("Peter:Parker")
+  end
+
+  it "parses boolean flags" do
+    result = Login.run(["-u", "Peter", "--password", "Parker", "-v"])
+
+    expect(result).to eq("flag username: Peter; flag password: Parker")
+
+    result = Login.run(["-u", "Peter", "--verbose", "--password", "Parker"])
+
+    expect(result).to eq("flag username: Peter; flag password: Parker")
   end
 
 end
