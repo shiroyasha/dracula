@@ -6,39 +6,39 @@ RSpec.describe Dracula do
   end
 
   class Login < Dracula::Command
-    flag :username, :short => "u", :required => true
-    flag :password, :short => "p", :required => true
-    flag :verbose,  :short => "v", :type => :boolean
-
     def run
-      if flags[:verbose]
-        "flag username: #{flags[:username]}; flag password: #{flags[:password]}"
-      else
-        "#{flags[:username]}:#{flags[:password]}"
-      end
+      "Log in"
     end
   end
 
-  it "parses command line flags" do
-    result = Login.run(["--username", "Peter", "--password", "Parker"])
-
-    expect(result).to eq("Peter:Parker")
+  class TeamsInfo < Dracula::Command
+    def run
+      "Info for teams"
+    end
   end
 
-  it "parses short command line flags" do
-    result = Login.run(["-u", "Peter", "--password", "Parker"])
-
-    expect(result).to eq("Peter:Parker")
+  class TeamsProjectsList < Dracula::Command
+    def run
+      "Listing team's projects"
+    end
   end
 
-  it "parses boolean flags" do
-    result = Login.run(["-u", "Peter", "--password", "Parker", "-v"])
+  class CLI < Dracula::Router
+    on "login" => Login
+    on "teams:info" => TeamsInfo
+    on "teams:projects:list" => TeamsProjectsList
+  end
 
-    expect(result).to eq("flag username: Peter; flag password: Parker")
+  it "can route simple commands" do
+    expect(CLI.run(["login"])).to eq("Log in")
+  end
 
-    result = Login.run(["-u", "Peter", "--verbose", "--password", "Parker"])
+  it "can run namespaced commands" do
+    expect(CLI.run(["teams:info"])).to eq("Info for teams")
+  end
 
-    expect(result).to eq("flag username: Peter; flag password: Parker")
+  it "can run deeply nested commands" do
+    expect(CLI.run(["teams:projects:list"])).to eq("Listing team's projects")
   end
 
 end
