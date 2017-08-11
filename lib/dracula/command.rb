@@ -8,8 +8,11 @@ module Dracula
       flags << Flag.new(name, params)
     end
 
-    def self.run(args)
-      new([], parse_flags(args)).run
+    def self.run(params)
+      args = params.take_while { |p| p[0] != "-" }
+      flags = params.drop_while { |p| p[0] != "-" }
+
+      new(parse_flags(flags)).run(*args)
     end
 
     def self.parse_flags(args)
@@ -47,11 +50,9 @@ module Dracula
       parsed_flags
     end
 
-    attr_reader :args
     attr_reader :flags
 
-    def initialize(args, flags)
-      @args = args
+    def initialize(flags)
       @flags = flags
     end
   end

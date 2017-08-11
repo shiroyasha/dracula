@@ -36,4 +36,16 @@ describe Dracula::Command do
 
     expect(result).to eq("flag username: Peter; flag password: Parker")
   end
+
+  class GitRemotes < Dracula::Command
+    flag :verbose, :short => "v", :type => :boolean
+
+    def run(name, url)
+      "Adding #{name} #{url}"
+    end
+  end
+
+  it "can parse positinal arguments" do
+    expect(GitRemotes.run(["origin", "github.com/shiroyasha/dracula"])).to eq("Adding origin github.com/shiroyasha/dracula")
+  end
 end
