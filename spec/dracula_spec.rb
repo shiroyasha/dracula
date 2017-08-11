@@ -19,13 +19,13 @@ RSpec.describe Dracula do
     end
   end
 
-  it "parser command line flags" do
+  it "parses command line flags" do
     result = Login.run(["--username", "Peter", "--password", "Parker"])
 
     expect(result).to eq("Peter:Parker")
   end
 
-  it "parser short command line flags" do
+  it "parses short command line flags" do
     result = Login.run(["-u", "Peter", "--password", "Parker"])
 
     expect(result).to eq("Peter:Parker")
