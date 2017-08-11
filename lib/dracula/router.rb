@@ -15,6 +15,14 @@ module Dracula
       @routes ||= []
     end
 
+    def self.default(command)
+      @default = command
+    end
+
+    def self.on_not_found(command)
+      @on_not_found = command
+    end
+
     def self.on(params)
       command = params.keys.first
       handler = params.values.first
@@ -23,15 +31,28 @@ module Dracula
     end
 
     def self.run(args)
-      command = args[0]
-      params = args[1..-1]
+      command = ""
+      params = []
+
+      if args.size == 0
+        command = @default
+      else
+        command = args[0]
+        params = args[1..-1]
+      end
 
       route = routes.find { |r| r.command == command }
 
       if route
         route.handler.run(params)
       else
-        puts "lll"
+        route = routes.find { |r| r.command == @on_not_found }
+
+        if route
+          route.handler.run(params)
+        else
+          puts "No such command"
+        end
       end
     end
 
