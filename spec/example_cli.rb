@@ -1,11 +1,9 @@
 class CLI < Dracula
-  option :username, :required => true
-  option :password, :required => true
-  option :verbose, :type => :boolean
+  option :username, :required => true, :alias => "u"
+  option :password, :required => true, :alias => "p"
+  option :verbose, :type => :boolean, :alias => "v"
   desc "login", "Log in to the cli"
   long_desc <<-LONGDESC
-    Login in to the CLI
-
     Examples:
 
       $ cli login --username Peter --password Parker
