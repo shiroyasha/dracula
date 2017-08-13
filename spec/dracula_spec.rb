@@ -1,65 +1,79 @@
 require "spec_helper"
 
+require_relative "example_cli"
+
 RSpec.describe Dracula do
   it "has a version number" do
     expect(Dracula::VERSION).not_to be nil
   end
 
-  class Login < Dracula::Command
-    def run
-      "Log in"
+  describe "Help Screens" do
+    describe "main help screen" do
+      it "lists the commands and subtopics" do
+        msg = [
+          "Usage: cli COMMAND",
+          "",
+          "Help topics, type cli help TOPIC for more details:",
+          "",
+          "  login    Log in to the cli",
+          "  teams    Manage teams",
+          ""
+        ].join("\n")
+
+        expect { CLI.start(["help"]) }.to output(msg)
+      end
+    end
+
+    describe "command help" do
+      it "shows the usage, flags, and long description" do
+        msg = [
+          "Usage: cli login",
+          "",
+          "Log in to the cli",
+          "",
+          "Flags:",
+          "  -u, --username",
+          "  -p, --password",
+          "  -v, --verbose",
+          "",
+          "Examples:"
+          "",
+          "  $ cli login --username Peter --password Parker",
+          "  Peter:Parker",
+          ""
+        ].join("\n")
+
+        expect { CLI.start(["help login"]) }.to output(msg)
+      end
+    end
+
+    describe "subtopic help" do
+      it "displays help for a subtopic" do
+        msg = [
+          "Usage: cli teams:<command>",
+          "",
+          "Manage teams",
+          "",
+          "  list     Show info for a team",
+          "  projects Manage projects in a team"
+          "",
+        ].join("\n")
+
+        expect { CLI.start(["help teams"]) }.to output(msg)
+      end
+    end
+
+    describe "subcommand help" do
+      it "displays help for a subcommand" do
+        msg = [
+          "Usage: cli teams:info",
+          "",
+          "Show info for a team",
+          ""
+        ].join("\n")
+
+        expect { CLI.start(["help teams:info"]) }.to output(msg)
+      end
     end
   end
-
-  class TeamsInfo < Dracula::Command
-    def run
-      "Info for teams"
-    end
-  end
-
-  class TeamsProjectsList < Dracula::Command
-    def run
-      "Listing team's projects"
-    end
-  end
-
-  class Help < Dracula::Command
-    def run
-      "help"
-    end
-  end
-
-  class CLI < Dracula::Router
-    default "help"
-
-    on "help" => Help
-    on "login" => Login
-    on "teams:info" => TeamsInfo
-    on "teams:projects:list" => TeamsProjectsList
-
-    on_not_found "help"
-  end
-
-  it "can route simple commands" do
-    expect(CLI.run(["login"])).to eq("Log in")
-  end
-
-  it "can run namespaced commands" do
-    expect(CLI.run(["teams:info"])).to eq("Info for teams")
-  end
-
-  it "can run deeply nested commands" do
-    expect(CLI.run(["teams:projects:list"])).to eq("Listing team's projects")
-  end
-
-  it "can route to the default handler" do
-    expect(CLI.run([])).to eq("help")
-  end
-
-  context "no route found" do
-    it "can route to assigned handler" do
-      expect(CLI.run(["lol"])).to eq("help")
-    end
-  end
-
 end
