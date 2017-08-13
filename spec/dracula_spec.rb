@@ -20,7 +20,7 @@ RSpec.describe Dracula do
           ""
         ].join("\n")
 
-        expect { CLI.start(["help"]) }.to output(msg)
+        expect { CLI.start(["help"]) }.to output(msg).to_stdout
       end
     end
 
@@ -36,14 +36,14 @@ RSpec.describe Dracula do
           "  -p, --password",
           "  -v, --verbose",
           "",
-          "Examples:"
+          "Examples:",
           "",
           "  $ cli login --username Peter --password Parker",
           "  Peter:Parker",
           ""
         ].join("\n")
 
-        expect { CLI.start(["help login"]) }.to output(msg)
+        expect { CLI.start(["help login"]) }.to output(msg).to_stdout
       end
     end
 
@@ -55,11 +55,11 @@ RSpec.describe Dracula do
           "Manage teams",
           "",
           "  list     Show info for a team",
-          "  projects Manage projects in a team"
-          "",
+          "  projects Manage projects in a team",
+          ""
         ].join("\n")
 
-        expect { CLI.start(["help teams"]) }.to output(msg)
+        expect { CLI.start(["help teams"]) }.to output(msg).to_stdout
       end
     end
 
@@ -72,7 +72,7 @@ RSpec.describe Dracula do
           ""
         ].join("\n")
 
-        expect { CLI.start(["help teams:info"]) }.to output(msg)
+        expect { CLI.start(["help teams:info"]) }.to output(msg).to_stdout
       end
     end
   end
