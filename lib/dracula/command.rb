@@ -4,6 +4,8 @@ class Dracula
     Desc = Struct.new(:name, :description)
     Option = Struct.new(:name, :params)
 
+    attr_reader :name
+
     def initialize(name, desc, long_desc, options)
       @name = name
       @desc = desc

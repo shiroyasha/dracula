@@ -76,4 +76,25 @@ RSpec.describe Dracula do
       end
     end
   end
+
+  describe "Invoking commands" do
+    it "can invoke simple commands" do
+      msg = [
+        "Peter:Parker"
+      ].join("\n")
+
+      expect { CLI.start(["login"]) }.to output(msg).to_stdout
+    end
+
+    it "can invoke nested commands"  do
+      msg = [
+        "X/Team A",
+        "X/Team B",
+        "X/Team C",
+        ""
+      ].join("\n")
+
+      expect { CLI.start(["teams:list", "X"]) }.to output(msg).to_stdout
+    end
+  end
 end

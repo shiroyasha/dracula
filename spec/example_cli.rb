@@ -12,10 +12,10 @@ class CLI < Dracula
   def login
     if options[:verbose]
       puts "Starting login sequence"
-      puts "#{option[:username]} #{option[:password]}"
+      puts "#{options[:username]} #{options[:password]}"
       puts "Done"
     else
-      puts "#{option[:username]}:#{option[:password]}"
+      puts "#{options[:username]}:#{options[:password]}"
     end
   end
 
@@ -23,9 +23,9 @@ class CLI < Dracula
 
     desc "list", "List teams in an organization"
     def list(org)
-      puts "Team A"
-      puts "Team B"
-      puts "Team C"
+      puts "#{org}/Team A"
+      puts "#{org}/Team B"
+      puts "#{org}/Team C"
     end
 
     desc "info", "Show info for a team"

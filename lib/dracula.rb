@@ -9,11 +9,41 @@ class Dracula
   Subcommand = Struct.new(:name, :description, :klass)
 
   def self.start(args)
-    p commands
+    if args.empty?
+      help
+    else
+      command = args.shift
+      params = args
 
-    subcommands.each do |sc|
-      p sc.name
-      p sc.klass.commands
+      dispatch(command, params)
+    end
+  end
+
+  def self.help
+    puts "Showing help"
+  end
+
+  def self.dispatch(command_name, params)
+    if command_name.include?(":")
+      topic, command_name = command_name.split(":", 2)
+
+      subcommand = subcommands.find { |sc| sc.name == topic }
+
+      if subcommand
+        subcommand.klass.dispatch(command_name, params)
+      else
+        puts "Command '#{topic}:#{command_name} not found"
+        help
+      end
+    else
+      command = commands.find { |c| c.name.to_s == command_name }
+
+      if command
+        self.new.public_send(command.name, *params)
+      else
+        puts "Command '#{command_name}' not found"
+        help
+      end
     end
   end
 
@@ -50,6 +80,12 @@ class Dracula
     @desc = nil
     @long_desc = nil
     @options = nil
+  end
+
+  attr_reader :options
+
+  def initialize
+    @options = {}
   end
 
 end
