@@ -15,7 +15,11 @@ class Dracula
       command = args.shift
       params = args
 
-      dispatch(command, params)
+      if command == "help"
+        help
+      else
+        dispatch(command, params)
+      end
     end
   end
 

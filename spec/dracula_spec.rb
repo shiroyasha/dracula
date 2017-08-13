@@ -43,7 +43,7 @@ RSpec.describe Dracula do
           ""
         ].join("\n")
 
-        expect { CLI.start(["help login"]) }.to output(msg).to_stdout
+        expect { CLI.start(["help", "login"]) }.to output(msg).to_stdout
       end
     end
 
@@ -59,7 +59,7 @@ RSpec.describe Dracula do
           ""
         ].join("\n")
 
-        expect { CLI.start(["help teams"]) }.to output(msg).to_stdout
+        expect { CLI.start(["help", "teams"]) }.to output(msg).to_stdout
       end
     end
 
@@ -72,7 +72,7 @@ RSpec.describe Dracula do
           ""
         ].join("\n")
 
-        expect { CLI.start(["help teams:info"]) }.to output(msg).to_stdout
+        expect { CLI.start(["help", "teams:info"]) }.to output(msg).to_stdout
       end
     end
   end
