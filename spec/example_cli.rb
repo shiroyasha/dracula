@@ -4,10 +4,10 @@ class CLI < Dracula
   option :verbose, :type => :boolean, :alias => "v"
   desc "login", "Log in to the cli"
   long_desc <<-LONGDESC
-    Examples:
+Examples:
 
-      $ cli login --username Peter --password Parker
-      Peter:Parker
+  $ cli login --username Peter --password Parker
+  Peter:Parker
   LONGDESC
   def login
     if options[:verbose]

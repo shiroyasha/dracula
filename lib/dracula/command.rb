@@ -2,16 +2,29 @@ class Dracula
   class Command
 
     Desc = Struct.new(:name, :description)
-    Option = Struct.new(:name, :params)
+
+    class Option < Struct.new(:name, :params)
+
+      def alias
+        params[:alias]
+      end
+
+    end
 
     attr_reader :method_name
     attr_reader :desc
+    attr_reader :options
+    attr_reader :long_desc
 
     def initialize(method_name, desc, long_desc, options)
       @method_name = method_name
       @desc = desc
       @long_desc = long_desc
       @options = options
+    end
+
+    def name
+      desc.name
     end
 
     # def self.flags

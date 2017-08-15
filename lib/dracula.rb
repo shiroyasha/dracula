@@ -16,14 +16,57 @@ class Dracula
       params = args
 
       if command == "help"
-        help
+        help(params)
       else
         dispatch(command, params)
       end
     end
   end
 
-  def self.help
+  def self.help(params = [])
+    if params.empty?
+      topic_help
+    else
+      command_name = params.first
+      command = commands.find { |c| c.name.to_s == command_name }
+
+      if command
+        command_help(command)
+      else
+        puts "Command '#{command_name}' not found"
+        help
+      end
+    end
+  end
+
+  def self.command_help(command)
+    msg = [
+      "Usage: cli #{command.desc.name}",
+      "",
+      "#{command.desc.description}",
+      ""
+    ]
+
+    if command.options.size > 0
+      msg << "Flags:"
+
+      command.options.each do |option|
+        if option.alias.empty?
+          msg << "  --#{option.name}"
+        else
+          msg << "  -#{option.alias}, --#{option.name}"
+        end
+      end
+
+      msg << ""
+    end
+
+    msg << command.long_desc
+
+    puts msg.join("\n")
+  end
+
+  def self.topic_help
     message = [
       "Usage: cli COMMAND",
       "",
