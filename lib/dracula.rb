@@ -24,7 +24,24 @@ class Dracula
   end
 
   def self.help
-    puts "Showing help"
+    message = [
+      "Usage: cli COMMAND",
+      "",
+      "Help topics, type cli help TOPIC for more details:",
+      ""
+    ]
+
+    commands.each do |cmd|
+      message << "  #{cmd.desc.name}  #{cmd.desc.description}"
+    end
+
+    subcommands.each do |sub_cmd|
+      message << "  #{sub_cmd.name}  #{sub_cmd.description}"
+    end
+
+    message << ""
+
+    puts message.join("\n")
   end
 
   def self.dispatch(command_name, params)
@@ -43,7 +60,7 @@ class Dracula
       command = commands.find { |c| c.name.to_s == command_name }
 
       if command
-        self.new.public_send(command.name, *params)
+        self.new.public_send(command.method_name, *params)
       else
         puts "Command '#{command_name}' not found"
         help

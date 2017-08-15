@@ -15,8 +15,8 @@ RSpec.describe Dracula do
           "",
           "Help topics, type cli help TOPIC for more details:",
           "",
-          "  login    Log in to the cli",
-          "  teams    Manage teams",
+          "  login  Log in to the cli",
+          "  teams  Manage teams",
           ""
         ].join("\n")
 
