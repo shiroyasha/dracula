@@ -1,5 +1,7 @@
 # Dracula
 
+[![Build Status](https://semaphoreci.com/api/v1/shiroyasha/dracula/branches/master/badge.svg)](https://semaphoreci.com/shiroyasha/dracula)
+
 ## Usage
 
 First, define your commands:
