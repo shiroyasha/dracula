@@ -28,13 +28,33 @@ class Dracula
       topic_help
     else
       command_name = params.first
-      command = commands.find { |c| c.name.to_s == command_name }
 
-      if command
-        command_help(command)
+      if command_name.include?(":")
+        topic, command_name = command_name.split(":", 2)
+
+        subcommand = subcommands.find { |sc| sc.name == topic }
+
+        if subcommand
+          subcommand.klass.help(command_name)
+        else
+          puts "Command '#{topic}:#{command_name} not found"
+          help
+        end
       else
-        puts "Command '#{command_name}' not found"
-        help
+        command = commands.find { |c| c.name.to_s == command_name }
+
+        if command
+          command_help(command)
+        else
+          subcommand = subcommands.find { |sc| sc.name == command_name }
+
+          if subcommand
+            subcommand.klass.help
+          else
+            puts "Command '#{command_name}' not found"
+            help
+          end
+        end
       end
     end
   end
