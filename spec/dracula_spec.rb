@@ -11,7 +11,7 @@ RSpec.describe Dracula do
     describe "main help screen" do
       it "lists the commands and subtopics" do
         msg = [
-          "Usage: cli COMMAND",
+          "Usage: abc COMMAND",
           "",
           "Help topics, type cli help TOPIC for more details:",
           "",
@@ -27,7 +27,7 @@ RSpec.describe Dracula do
     describe "command help" do
       it "shows the usage, flags, and long description" do
         msg = [
-          "Usage: cli login",
+          "Usage: abc login",
           "",
           "Log in to the cli",
           "",
@@ -50,7 +50,7 @@ RSpec.describe Dracula do
     describe "subtopic help" do
       it "displays help for a subtopic" do
         msg = [
-          "Usage: cli teams:<command>",
+          "Usage: abc teams:<command>",
           "",
           "Manage teams",
           "",

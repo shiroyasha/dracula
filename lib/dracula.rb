@@ -23,15 +23,23 @@ class Dracula
     end
   end
 
+  def self.program_name(name = nil)
+    if name.nil?
+      @program_name || "dracula" # getter
+    else
+      @program_name = name       # setter
+    end
+  end
+
   def self.help(params = [])
     if params.empty?
-      topic_help
+      namespace_help
     else
       command_name = params.first
       command = commands.find { |c| c.name.to_s == command_name }
 
       if command
-        command_help(command)
+        command.help(program_name)
       else
         puts "Command '#{command_name}' not found"
         help
@@ -39,13 +47,9 @@ class Dracula
     end
   end
 
-  def self.command_help(command)
-    command.help("cli")
-  end
-
-  def self.topic_help
+  def self.namespace_help
     message = [
-      "Usage: cli COMMAND",
+      "Usage: #{program_name} COMMAND",
       "",
       "Help topics, type cli help TOPIC for more details:",
       ""

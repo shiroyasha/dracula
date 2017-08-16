@@ -36,7 +36,7 @@ class Dracula
 
     def help(program_name, namespace = nil)
       msg = [
-        "Usage: cli #{desc.name}",
+        "Usage: #{program_name} #{namespace ? "#{namespace}:" : "" }#{desc.name}",
         "",
         "#{desc.description}",
         ""
