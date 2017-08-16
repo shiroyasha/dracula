@@ -5,10 +5,17 @@ class Dracula
 
     class Option < Struct.new(:name, :params)
 
-      def alias
+      def alias_name
         params[:alias]
       end
 
+      def banner
+        if alias_name.empty?
+          "--#{name}"
+        else
+          "-#{alias_name}, --#{name}"
+        end
+      end
     end
 
     attr_reader :method_name
@@ -38,13 +45,7 @@ class Dracula
       if options.size > 0
         msg << "Flags:"
 
-        options.each do |option|
-          if option.alias.empty?
-            msg << "  --#{option.name}"
-          else
-            msg << "  -#{option.alias}, --#{option.name}"
-          end
-        end
+        options.each { |option| msg << "  #{option.banner}" }
 
         msg << ""
       end
