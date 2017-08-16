@@ -11,9 +11,9 @@ RSpec.describe Dracula do
     describe "main help screen" do
       it "lists the commands and subtopics" do
         msg = [
-          "Usage: abc COMMAND",
+          "Usage: abc <command>",
           "",
-          "Help topics, type cli help TOPIC for more details:",
+          "Help topics, type abc help TOPIC for more details:",
           "",
           "  login  Log in to the cli",
           "  teams  Manage teams",
@@ -47,15 +47,16 @@ RSpec.describe Dracula do
       end
     end
 
-    describe "subtopic help" do
-      it "displays help for a subtopic" do
+    describe "subnamespace help" do
+      it "displays help for a subnamespace" do
         msg = [
           "Usage: abc teams:<command>",
           "",
           "Manage teams",
           "",
-          "  list     Show info for a team",
-          "  projects Manage projects in a team",
+          "  teams:list  List teams in an organization",
+          "  teams:info  Show info for a team",
+          "  teams:projects  Manage projects in a team",
           ""
         ].join("\n")
 
@@ -66,10 +67,10 @@ RSpec.describe Dracula do
     describe "subcommand help" do
       it "displays help for a subcommand" do
         msg = [
-          "Usage: cli teams:info",
+          "Usage: abc teams:info",
           "",
           "Show info for a team",
-          ""
+          "",
         ].join("\n")
 
         expect { CLI.start(["help", "teams:info"]) }.to output(msg).to_stdout

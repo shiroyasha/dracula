@@ -16,6 +16,7 @@ class Dracula
           "-#{alias_name}, --#{name}"
         end
       end
+
     end
 
     attr_reader :method_name
@@ -23,20 +24,21 @@ class Dracula
     attr_reader :options
     attr_reader :long_desc
 
-    def initialize(method_name, desc, long_desc, options)
+    def initialize(klass, method_name, desc, long_desc, options)
+      @klass = klass
       @method_name = method_name
       @desc = desc
       @long_desc = long_desc
-      @options = options
+      @options = options || []
     end
 
     def name
       desc.name
     end
 
-    def help(program_name, namespace = nil)
+    def help
       msg = [
-        "Usage: #{program_name} #{namespace ? "#{namespace}:" : "" }#{desc.name}",
+        "Usage: #{Dracula.program_name} #{@klass.namespace.name ? "#{@klass.namespace.name}:" : "" }#{desc.name}",
         "",
         "#{desc.description}",
         ""
@@ -50,9 +52,15 @@ class Dracula
         msg << ""
       end
 
-      msg << long_desc
+      unless long_desc.nil?
+        msg << long_desc
+      end
 
       puts msg.join("\n")
+    end
+
+    def run(params)
+      @klass.new.public_send(method_name, *params)
     end
 
     # def self.flags
