@@ -27,6 +27,33 @@ class Dracula
       desc.name
     end
 
+    def help(program_name, namespace = nil)
+      msg = [
+        "Usage: cli #{desc.name}",
+        "",
+        "#{desc.description}",
+        ""
+      ]
+
+      if options.size > 0
+        msg << "Flags:"
+
+        options.each do |option|
+          if option.alias.empty?
+            msg << "  --#{option.name}"
+          else
+            msg << "  -#{option.alias}, --#{option.name}"
+          end
+        end
+
+        msg << ""
+      end
+
+      msg << long_desc
+
+      puts msg.join("\n")
+    end
+
     # def self.flags
     #   @flags ||= []
     # end

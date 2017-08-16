@@ -40,30 +40,7 @@ class Dracula
   end
 
   def self.command_help(command)
-    msg = [
-      "Usage: cli #{command.desc.name}",
-      "",
-      "#{command.desc.description}",
-      ""
-    ]
-
-    if command.options.size > 0
-      msg << "Flags:"
-
-      command.options.each do |option|
-        if option.alias.empty?
-          msg << "  --#{option.name}"
-        else
-          msg << "  -#{option.alias}, --#{option.name}"
-        end
-      end
-
-      msg << ""
-    end
-
-    msg << command.long_desc
-
-    puts msg.join("\n")
+    command.help("cli")
   end
 
   def self.topic_help
