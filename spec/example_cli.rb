@@ -1,4 +1,6 @@
 class CLI < Dracula
+  program_name :abc
+
   option :username, :required => true, :alias => "u"
   option :password, :required => true, :alias => "p"
   option :verbose, :type => :boolean, :alias => "v"

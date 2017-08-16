@@ -5,8 +5,16 @@ class Dracula
 
     class Option < Struct.new(:name, :params)
 
-      def alias
+      def alias_name
         params[:alias]
+      end
+
+      def banner
+        if alias_name.empty?
+          "--#{name}"
+        else
+          "-#{alias_name}, --#{name}"
+        end
       end
 
     end
@@ -16,15 +24,43 @@ class Dracula
     attr_reader :options
     attr_reader :long_desc
 
-    def initialize(method_name, desc, long_desc, options)
+    def initialize(klass, method_name, desc, long_desc, options)
+      @klass = klass
       @method_name = method_name
       @desc = desc
       @long_desc = long_desc
-      @options = options
+      @options = options || []
     end
 
     def name
       desc.name
+    end
+
+    def help
+      msg = [
+        "Usage: #{Dracula.program_name} #{@klass.namespace.name ? "#{@klass.namespace.name}:" : "" }#{desc.name}",
+        "",
+        "#{desc.description}",
+        ""
+      ]
+
+      if options.size > 0
+        msg << "Flags:"
+
+        options.each { |option| msg << "  #{option.banner}" }
+
+        msg << ""
+      end
+
+      unless long_desc.nil?
+        msg << long_desc
+      end
+
+      puts msg.join("\n")
+    end
+
+    def run(params)
+      @klass.new.public_send(method_name, *params)
     end
 
     # def self.flags

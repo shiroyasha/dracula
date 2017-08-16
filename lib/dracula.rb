@@ -3,112 +3,42 @@ require "optparse"
 
 class Dracula
   require "dracula/command"
+  require "dracula/namespace"
   # require "dracula/flag"
-  # require "dracula/router"
 
-  Subcommand = Struct.new(:name, :description, :klass)
+  def self.program_name(name = nil)
+    if name.nil?
+      @@program_name || "dracula" # getter
+    else
+      @@program_name = name       # setter
+    end
+  end
 
   def self.start(args)
-    if args.empty?
-      help
+    if args.empty? || (args.size == 1 && args[0] == "help")
+      namespace.help
     else
-      command = args.shift
-      params = args
+      action = args[0] == "help" ? :help : :run
 
-      if command == "help"
-        help(params)
+      if args[0] == "help"
+        action = :help
+
+        args.shift # drop 'help'
+
+        command = args.shift
+        params  = args
       else
-        dispatch(command, params)
+        action = :run
+        command = args.shift
+        params  = args
       end
+
+      namespace.dispatch(command.split(":"), params, action)
     end
   end
 
-  def self.help(params = [])
-    if params.empty?
-      topic_help
-    else
-      command_name = params.first
-      command = commands.find { |c| c.name.to_s == command_name }
-
-      if command
-        command_help(command)
-      else
-        puts "Command '#{command_name}' not found"
-        help
-      end
-    end
-  end
-
-  def self.command_help(command)
-    msg = [
-      "Usage: cli #{command.desc.name}",
-      "",
-      "#{command.desc.description}",
-      ""
-    ]
-
-    if command.options.size > 0
-      msg << "Flags:"
-
-      command.options.each do |option|
-        if option.alias.empty?
-          msg << "  --#{option.name}"
-        else
-          msg << "  -#{option.alias}, --#{option.name}"
-        end
-      end
-
-      msg << ""
-    end
-
-    msg << command.long_desc
-
-    puts msg.join("\n")
-  end
-
-  def self.topic_help
-    message = [
-      "Usage: cli COMMAND",
-      "",
-      "Help topics, type cli help TOPIC for more details:",
-      ""
-    ]
-
-    commands.each do |cmd|
-      message << "  #{cmd.desc.name}  #{cmd.desc.description}"
-    end
-
-    subcommands.each do |sub_cmd|
-      message << "  #{sub_cmd.name}  #{sub_cmd.description}"
-    end
-
-    message << ""
-
-    puts message.join("\n")
-  end
-
-  def self.dispatch(command_name, params)
-    if command_name.include?(":")
-      topic, command_name = command_name.split(":", 2)
-
-      subcommand = subcommands.find { |sc| sc.name == topic }
-
-      if subcommand
-        subcommand.klass.dispatch(command_name, params)
-      else
-        puts "Command '#{topic}:#{command_name} not found"
-        help
-      end
-    else
-      command = commands.find { |c| c.name.to_s == command_name }
-
-      if command
-        self.new.public_send(command.method_name, *params)
-      else
-        puts "Command '#{command_name}' not found"
-        help
-      end
-    end
+  def self.namespace
+    @namespace ||= Dracula::Namespace.new(self)
   end
 
   def self.option(name, params = {})
@@ -125,25 +55,20 @@ class Dracula
   end
 
   def self.register(name, description, klass)
-    subcommands << Subcommand.new(name, description, klass)
-  end
+    klass.namespace.name = name
+    klass.namespace.description = description
 
-  def self.commands
-    @commands ||= []
-    @commands
-  end
-
-  def self.subcommands
-    @subcommands ||= []
-    @subcommands
+    namespace.add_subcommand(klass.namespace)
   end
 
   private_class_method def self.method_added(method_name)
-    commands << Command.new(method_name, @desc, @long_desc, @options)
+    command = Command.new(self, method_name, @desc, @long_desc, @options)
 
     @desc = nil
     @long_desc = nil
     @options = nil
+
+    namespace.add_command(command)
   end
 
   attr_reader :options
