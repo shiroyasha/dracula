@@ -81,10 +81,11 @@ RSpec.describe Dracula do
   describe "Invoking commands" do
     it "can invoke simple commands" do
       msg = [
-        "Peter:Parker"
+        "Peter:Parker",
+        ""
       ].join("\n")
 
-      expect { CLI.start(["login"]) }.to output(msg).to_stdout
+      expect { CLI.start(["login", "--username", "Peter", "--password", "Parker"]) }.to output(msg).to_stdout
     end
 
     it "can invoke nested commands"  do

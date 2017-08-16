@@ -5,6 +5,26 @@ class Dracula
 
     class Option < Struct.new(:name, :params)
 
+      def short_name
+        params[:aliases]
+      end
+
+      def type
+        params[:type] || :string
+      end
+
+      def boolean?
+        type == :boolean
+      end
+
+      def has_default_value?
+        params.has_key?(:default)
+      end
+
+      def default_value
+        params[:default]
+      end
+
       def alias_name
         params[:alias]
       end
@@ -23,6 +43,8 @@ class Dracula
     attr_reader :desc
     attr_reader :options
     attr_reader :long_desc
+
+    alias_method :flags, :options
 
     def initialize(klass, method_name, desc, long_desc, options)
       @klass = klass
@@ -60,63 +82,47 @@ class Dracula
     end
 
     def run(params)
-      @klass.new.public_send(method_name, *params)
+      args  = params.take_while { |p| p[0] != "-" }
+      flags = parse_flags(params.drop_while { |p| p[0] != "-" })
+
+      @klass.new(flags).public_send(method_name, *args)
     end
 
-    # def self.flags
-    #   @flags ||= []
-    # end
+    private
 
-    # def self.flag(name, params= {})
-    #   flags << Flag.new(name, params)
-    # end
+    def parse_flags(args)
+      parsed_flags = {}
 
-    # def self.run(params)
-    #   args = params.take_while { |p| p[0] != "-" }
-    #   flags = params.drop_while { |p| p[0] != "-" }
+      # set default values
+      flags.each do |flag|
+        if flag.has_default_value?
+          parsed_flags[flag.name] = flag.default_value
+        end
+      end
 
-    #   new(parse_flags(flags)).run(*args)
-    # end
+      opt_parser = OptionParser.new do |opts|
+        flags.each do |flag|
+          if flag.boolean?
+            short = "-#{flag.short_name}"
+            long  = "--#{flag.name}"
 
-    # def self.parse_flags(args)
-    #   parsed_flags = {}
+            opts.on(short, long, flag.type) do
+              parsed_flags[flag.name] = true
+            end
+          else
+            short = "-#{flag.short_name}"
+            long  = "--#{flag.name} VALUE"
 
-    #   # set default values
-    #   flags.each do |flag|
-    #     if flag.has_default_value?
-    #       parsed_flags[flag.name] = flag.default_value
-    #     end
-    #   end
+            opts.on(short, long, flag.type) do |value|
+              parsed_flags[flag.name] = value
+            end
+          end
+        end
+      end
 
-    #   opt_parser = OptionParser.new do |opts|
-    #     flags.each do |flag|
-    #       if flag.boolean?
-    #         short = "-#{flag.short_name}"
-    #         long  = "--#{flag.name}"
+      opt_parser.parse!(args)
 
-    #         opts.on(short, long, flag.type) do
-    #           parsed_flags[flag.name] = true
-    #         end
-    #       else
-    #         short = "-#{flag.short_name}"
-    #         long  = "--#{flag.name} VALUE"
-
-    #         opts.on(short, long, flag.type) do |value|
-    #           parsed_flags[flag.name] = value
-    #         end
-    #       end
-    #     end
-    #   end
-
-    #   opt_parser.parse!(args)
-
-    #   parsed_flags
-    # end
-
-    # attr_reader :flags
-
-    # def initialize(flags)
-    #   @flags = flags
-    # end
+      parsed_flags
+    end
   end
 end
