@@ -18,11 +18,15 @@ class Dracula
       end
 
       def has_default_value?
-        params.has_key?(:default)
+        params.has_key?(:default) || boolean?
       end
 
       def default_value
-        params[:default]
+        if boolean?
+          params.key?(:default) || false
+        else
+          params[:default]
+        end
       end
 
       def alias_name

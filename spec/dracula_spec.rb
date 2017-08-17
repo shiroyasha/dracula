@@ -99,4 +99,51 @@ RSpec.describe Dracula do
       expect { CLI.start(["teams:list", "X"]) }.to output(msg).to_stdout
     end
   end
+
+  describe "Flags" do
+    it "can parse string flags" do
+      cli = Class.new(Dracula) do
+
+        option :name
+        desc "hello", "testing"
+        def hello
+          puts options[:name]
+        end
+
+      end
+
+      expect { cli.start(["hello", "--name", "Clark"]) }.to output(/Clark/).to_stdout
+    end
+
+    it "can parse boolean flags" do
+      cli = Class.new(Dracula) do
+
+        option :json, :type => :boolean
+        desc "hello", "testing"
+        def hello
+          puts options[:json]
+        end
+
+      end
+
+      expect { cli.start(["hello", "--json"]) }.to output(/true/).to_stdout
+      expect { cli.start(["hello"]) }.to output(/false/).to_stdout
+    end
+
+    it "sets default values" do
+      cli = Class.new(Dracula) do
+
+        option :json, :type => :boolean, :default => true
+        option :name, :default => "peter"
+        option :age
+        desc "hello", "testing"
+        def hello
+          puts "#{options[:json]}, #{options[:name]}, #{options[:age]}"
+        end
+
+      end
+
+      expect { cli.start(["hello", "--json"]) }.to output(/true, peter,/).to_stdout
+    end
+  end
 end
