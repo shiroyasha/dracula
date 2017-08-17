@@ -54,8 +54,8 @@ RSpec.describe Dracula do
           "",
           "Manage teams",
           "",
-          "  teams:list  List teams in an organization",
-          "  teams:info  Show info for a team",
+          "  teams:list      List teams in an organization",
+          "  teams:info      Show info for a team",
           "  teams:projects  Manage projects in a team",
           ""
         ].join("\n")
