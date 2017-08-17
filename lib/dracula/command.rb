@@ -23,7 +23,7 @@ class Dracula
 
       def default_value
         if boolean?
-          params.key?(:default) || false
+          params.key?(:default) ? params[:default] : false
         else
           params[:default]
         end

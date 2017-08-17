@@ -134,16 +134,17 @@ RSpec.describe Dracula do
       cli = Class.new(Dracula) do
 
         option :json, :type => :boolean, :default => true
+        option :yaml, :type => :boolean, :default => false
         option :name, :default => "peter"
         option :age
         desc "hello", "testing"
         def hello
-          puts "#{options[:json]}, #{options[:name]}, #{options[:age]}"
+          puts "#{options[:json]}, #{options[:yaml]}, #{options[:name]}, #{options[:age]}"
         end
 
       end
 
-      expect { cli.start(["hello", "--json"]) }.to output(/true, peter,/).to_stdout
+      expect { cli.start(["hello", "--json"]) }.to output(/true, false, peter,/).to_stdout
     end
   end
 end
