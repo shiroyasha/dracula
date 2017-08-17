@@ -42,24 +42,22 @@ class Dracula
     def help
       prefix = name ? "#{name}:" : ""
 
-      message = [
-        "Usage: #{Dracula.program_name} #{prefix}<command>",
-        "",
-        (description || "Help topics, type #{Dracula.program_name} help TOPIC for more details:"),
-        ""
-      ]
+      puts "Usage: #{Dracula.program_name} #{prefix}<command>"
+      puts ""
+      puts (description || "Help topics, type #{Dracula.program_name} help TOPIC for more details:")
+      puts ""
+
+      command_list = []
 
       commands.each do |cmd|
-        message << "  #{prefix}#{cmd.desc.name}  #{cmd.desc.description}"
+        command_list << ["#{prefix}#{cmd.desc.name}", cmd.desc.description]
       end
 
       subcommands.each do |sub_cmd|
-        message << "  #{prefix}#{sub_cmd.name}  #{sub_cmd.description}"
+        command_list << ["#{prefix}#{sub_cmd.name}", sub_cmd.description]
       end
 
-      message << ""
-
-      puts message.join("\n")
+      Dracula::UI.print_table(command_list, :indent => 2)
     end
 
     def add_command(command)
