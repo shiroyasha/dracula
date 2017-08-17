@@ -4,7 +4,7 @@ require "optparse"
 class Dracula
   require "dracula/command"
   require "dracula/namespace"
-  # require "dracula/flag"
+  require "dracula/ui"
 
   def self.program_name(name = nil)
     if name.nil?
